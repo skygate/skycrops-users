@@ -1,5 +1,7 @@
 from app import application
 
+from config import HOST
+
 
 @application.shell_context_processor
 def make_shell_context():
@@ -7,4 +9,4 @@ def make_shell_context():
 
 
 if __name__ == "__main__":
-    application.run(debug=True, host="0.0.0.0")
+    application.run(debug=True, host=HOST)
