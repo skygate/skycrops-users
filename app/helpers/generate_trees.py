@@ -20,9 +20,20 @@ class TreesGenerator:
         distance_between_rows: float,
         distance_between_trees: float,
     ) -> None:
-        self.corner_coords = self._coords_to_utm(corner_coords)
+        self.corner_coords = self._sort_coords(corner_coords)
         self.distance_between_rows = distance_between_rows
         self.distance_between_trees = distance_between_trees
+
+    def _sort_coords(self, coords: List[Point]) -> List[Point]:
+        utm_coords = self._coords_to_utm(coords)
+        default_point = (0, 0)
+        distances = [distance.euclidean(default_point, point) for point in utm_coords]
+        closest_point = utm_coords[np.argmin(distances)]
+        sorted_coords = [closest_point]
+        for point in utm_coords:
+            if point != closest_point:
+                sorted_coords.append(point)
+        return sorted_coords
 
     def _coords_to_utm(self, coords: List[Point]) -> List[Point]:
         """
