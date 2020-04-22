@@ -1,6 +1,8 @@
+import math
 from typing import List, Tuple
 
 import matplotlib.pyplot as plt
+import numpy as np
 import utm
 from scipy.spatial import distance
 
@@ -31,7 +33,22 @@ class TreesGenerator:
             for lat, lon in coords
         ]
 
-    def get_shorter_rectangle_sides(self) -> Tuple[Tuple[Point, Point]]:
+    def _get_alleys_endpoints(self):
+        first_side, second_side = self._get_shorter_rectangle_sides()
+        first_start_point = first_side[0]
+        first_end_point = first_side[1]
+        second_start_point = second_side[0]
+        second_end_point = second_side[1]
+
+        first_side_angle = math.atan(self._get_slope(first_start_point, first_end_point))
+        second_side_angle = math.atan(self._get_slope(second_start_point, second_end_point))
+
+        alleys_startpoints = self._generate_points(first_start_point, first_end_point, first_side_angle, self.distance_between_rows)
+        alleys_endpoints = self._generate_points(second_start_point, second_end_point, second_side_angle, self.distance_between_rows)
+
+        return alleys_startpoints + alleys_endpoints
+
+    def _get_shorter_rectangle_sides(self) -> Tuple[Tuple[Point, Point]]:
         first_shorter_side = (
             self.corner_coords[0],
             self._find_closest_point(self.corner_coords[0], self.corner_coords),
@@ -63,10 +80,19 @@ class TreesGenerator:
         """
         return (end_point[1] - start_point[1]) / (end_point[0] - start_point[0])
 
+    def _generate_points(self, start_point: Point, end_point: Point, angle: float, distance_between_points: float):
+        points = [start_point]
+        actual_point = start_point
+        while distance.euclidean(actual_point, end_point) >= distance_between_points:
+            actual_point = actual_point[0] + distance_between_points * np.cos(angle), actual_point[1] + distance_between_points * np.sin(angle)
+            points.append(actual_point)
+        return points
+
     def plot_coordinates(self) -> None:
         """
         Plots coordinates
         """
-        x, y = zip(*self.corner_coords)
+        coords = self._get_alleys_endpoints()
+        x, y = zip(*coords)
         plt.scatter(x, y, color="red")
         plt.show()

@@ -68,7 +68,6 @@ def generate_mapping():
         listed_coords, distance_between_rows, distance_between_trees
     )
 
-    sides = trees_generator.get_shorter_rectangle_sides()
-    print(sides)
+    trees_generator.plot_coordinates()
 
     return jsonify({"status": "Map generated successfully!"})
