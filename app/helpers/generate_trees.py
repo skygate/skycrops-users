@@ -20,20 +20,9 @@ class TreesGenerator:
         distance_between_rows: float,
         distance_between_trees: float,
     ) -> None:
-        self.corner_coords = self._sort_coords(corner_coords)
+        self.corner_coords = self._coords_to_utm(corner_coords)
         self.distance_between_rows = distance_between_rows
         self.distance_between_trees = distance_between_trees
-
-    def _sort_coords(self, coords: List[Point]) -> List[Point]:
-        utm_coords = self._coords_to_utm(coords)
-        default_point = (0, 0)
-        distances = [distance.euclidean(default_point, point) for point in utm_coords]
-        closest_point = utm_coords[np.argmin(distances)]
-        sorted_coords = [closest_point]
-        for point in utm_coords:
-            if point != closest_point:
-                sorted_coords.append(point)
-        return sorted_coords
 
     def _coords_to_utm(self, coords: List[Point]) -> List[Point]:
         """
@@ -44,22 +33,50 @@ class TreesGenerator:
             for lat, lon in coords
         ]
 
-    def _get_alleys_endpoints(self):
+    def get_trees_coords(self) -> List[Point]:
+        trees_coords = []
+        alleys_startpoints, alleys_endpoints = self._get_alleys_endpoints()
+        for idx, startpoint in enumerate(alleys_startpoints):
+            endpoint = alleys_endpoints[idx]
+            angle = math.atan(self._get_slope(startpoint, endpoint))
+            trees = self._generate_points(
+                startpoint, endpoint, angle, self.distance_between_trees
+            )
+            trees_coords.extend(trees)
+        return trees_coords
+
+    def _get_alleys_endpoints(self) -> Tuple[List[Point], List[Point]]:
         first_side, second_side = self._get_shorter_rectangle_sides()
         first_start_point = first_side[0]
         first_end_point = first_side[1]
         second_start_point = second_side[0]
         second_end_point = second_side[1]
 
-        first_side_angle = math.atan(self._get_slope(first_start_point, first_end_point))
-        second_side_angle = math.atan(self._get_slope(second_start_point, second_end_point))
+        first_side_angle = math.atan(
+            self._get_slope(first_start_point, first_end_point)
+        )
+        second_side_angle = math.atan(
+            self._get_slope(second_start_point, second_end_point)
+        )
 
-        alleys_startpoints = self._generate_points(first_start_point, first_end_point, first_side_angle, self.distance_between_rows)
-        alleys_endpoints = self._generate_points(second_start_point, second_end_point, second_side_angle, self.distance_between_rows)
+        alleys_startpoints = self._generate_points(
+            first_start_point,
+            first_end_point,
+            first_side_angle,
+            self.distance_between_rows,
+        )
+        alleys_endpoints = self._generate_points(
+            second_start_point,
+            second_end_point,
+            second_side_angle,
+            self.distance_between_rows,
+        )
 
-        return alleys_startpoints + alleys_endpoints
+        return alleys_startpoints, alleys_endpoints
 
-    def _get_shorter_rectangle_sides(self) -> Tuple[Tuple[Point, Point]]:
+    def _get_shorter_rectangle_sides(
+        self
+    ) -> Tuple[Tuple[Point, Point], Tuple[Point, Point]]:
         first_shorter_side = (
             self.corner_coords[0],
             self._find_closest_point(self.corner_coords[0], self.corner_coords),
@@ -91,11 +108,20 @@ class TreesGenerator:
         """
         return (end_point[1] - start_point[1]) / (end_point[0] - start_point[0])
 
-    def _generate_points(self, start_point: Point, end_point: Point, angle: float, distance_between_points: float):
+    def _generate_points(
+        self,
+        start_point: Point,
+        end_point: Point,
+        angle: float,
+        distance_between_points: float,
+    ):
         points = [start_point]
         actual_point = start_point
         while distance.euclidean(actual_point, end_point) >= distance_between_points:
-            actual_point = actual_point[0] + distance_between_points * np.cos(angle), actual_point[1] + distance_between_points * np.sin(angle)
+            actual_point = (
+                actual_point[0] + distance_between_points * np.cos(angle),
+                actual_point[1] + distance_between_points * np.sin(angle),
+            )
             points.append(actual_point)
         return points
 
@@ -103,7 +129,7 @@ class TreesGenerator:
         """
         Plots coordinates
         """
-        coords = self._get_alleys_endpoints()
+        coords = self.get_trees_coords()
         x, y = zip(*coords)
         plt.scatter(x, y, color="red")
         plt.show()
