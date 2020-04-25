@@ -34,6 +34,9 @@ class TreesGenerator:
         ]
 
     def get_trees_coords(self) -> List[Point]:
+        """
+        Iterates through every alley to get tree coordinates
+        """
         trees_coords = []
         alleys_startpoints, alleys_endpoints = self._get_alleys_endpoints()
         for idx, startpoint in enumerate(alleys_startpoints):
@@ -46,6 +49,9 @@ class TreesGenerator:
         return trees_coords
 
     def _get_alleys_endpoints(self) -> Tuple[List[Point], List[Point]]:
+        """
+        Gets starting points and endpoints of every alley
+        """
         first_side, second_side = self._get_shorter_rectangle_sides()
         first_start_point = first_side[0]
         first_end_point = first_side[1]
@@ -77,6 +83,9 @@ class TreesGenerator:
     def _get_shorter_rectangle_sides(
         self
     ) -> Tuple[Tuple[Point, Point], Tuple[Point, Point]]:
+        """
+        Find shorter rectangle sides in order to chose direction of orchard alleys (according to the assumption that alleys are parallel to longer side"
+        """
         first_shorter_side = (
             self.corner_coords[0],
             self._find_closest_point(self.corner_coords[0], self.corner_coords),
@@ -114,7 +123,15 @@ class TreesGenerator:
         end_point: Point,
         angle: float,
         distance_between_points: float,
-    ):
+    ) -> List[Point]:
+        """
+        Generates points with the given distance on a straight line described by the given angle
+        :param start_point: First point, next one is generated with distance to the previous one
+        :param end_point: If point has to be generated behind this, the function stops
+        :param angle: An angle of the straight line, on which points are generated
+        :param distance_between_points: Distance between the previous one and next one points
+        :return:
+        """
         points = [start_point]
         actual_point = start_point
         while distance.euclidean(actual_point, end_point) >= distance_between_points:
