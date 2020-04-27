@@ -14,7 +14,7 @@ from config import (
 from . import db
 from .helpers import utils
 from .helpers.generate_trees import TreesGenerator
-from .models import User
+from .models import User, Orchard
 
 api = Blueprint("api", __name__)
 
@@ -53,7 +53,8 @@ def create_user():
 @api.route("/users/database", methods=["POST"])
 def show_database():
     users = User.query.all()
-    return jsonify({"users": f"{users}"})
+    orchards = Orchard.query.all()
+    return jsonify({"status": [{"users": f"{users}"}, {"orchards": f"{orchards}"}]})
 
 
 @api.route("/users/database/clear", methods=["POST"])
@@ -62,6 +63,17 @@ def clear_database():
     db.create_all()
     db.session.commit()
     return jsonify({"status": "Database clear!"})
+
+
+@api.route("/users/orchards", methods=["POST"])
+def create_orchard():
+    user = User.query.get(1)
+
+    orchard = Orchard(rows=5, trees=10, author=user)
+    db.session.add(orchard)
+    db.session.commit()
+
+    return jsonify({"status": "Orchard saved to the database."})
 
 
 @api.route("/generate_mapping", methods=["POST"])
