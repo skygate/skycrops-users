@@ -32,4 +32,4 @@ class Orchard(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __repr__(self):
-        return f"<Orchard ID: {self.id}, Rows: {self.rows}, Trees: {self.trees}>"
+        return f"<Orchard ID: {self.id}, Rows: {self.rows}, Trees in each row: {self.trees}>"

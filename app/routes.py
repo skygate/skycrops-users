@@ -152,3 +152,11 @@ def login():
 def logout():
     logout_user()
     return jsonify({"status": "Successfully logged out!"})
+
+
+@api.route("/orchards", methods=["POST"])
+def get_orchards_data():
+    if not current_user.is_authenticated:
+        return jsonify({"status": "You have to login first!"}), 400
+    orchards = current_user.orchards.all()
+    return jsonify({"orchards": f"{orchards}"})
