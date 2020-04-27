@@ -1,11 +1,11 @@
-from app import application
-
+from app import application, db
+from app.models import User
 from config import HOST
 
 
 @application.shell_context_processor
 def make_shell_context():
-    pass
+    return {"db": db, "User": User}
 
 
 if __name__ == "__main__":
