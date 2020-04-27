@@ -69,15 +69,6 @@ def clear_database():
 def create_orchard():
     user = User.query.get(1)
 
-    orchard = Orchard(rows=5, trees=10, author=user)
-    db.session.add(orchard)
-    db.session.commit()
-
-    return jsonify({"status": "Orchard saved to the database."})
-
-
-@api.route("/generate_mapping", methods=["POST"])
-def generate_mapping():
     coords = request.files.get(COORDS_KEY)
     distance_between_rows = request.form.get(ROWS_KEY)
     distance_between_trees = request.form.get(TREES_KEY)
@@ -124,6 +115,8 @@ def generate_mapping():
         listed_coords, distance_between_rows, distance_between_trees
     )
 
-    trees_generator.plot_coordinates()
+    orchard = Orchard(rows=5, trees=10, author=user)
+    db.session.add(orchard)
+    db.session.commit()
 
-    return jsonify({"status": "Map generated successfully!"})
+    return jsonify({"status": f"{coords.filename} saved to the database."})
