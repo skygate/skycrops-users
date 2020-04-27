@@ -53,7 +53,7 @@ def create_user():
 @api.route("/users/database", methods=["POST"])
 def show_database():
     users = User.query.all()
-    return jsonify({"users": users})
+    return jsonify({"users": f"{users}"})
 
 
 @api.route("/users/database/clear", methods=["POST"])
