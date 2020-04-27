@@ -43,7 +43,8 @@ def create_user():
             400,
         )
 
-    user = User(username=name, password=password)
+    user = User(username=name)
+    user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
