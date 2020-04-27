@@ -1,6 +1,7 @@
 import io
 
 from flask import request, jsonify, Blueprint
+from flask_login import current_user, login_user, logout_user
 
 from config import (
     USERNAME_KEY,
@@ -124,3 +125,30 @@ def create_orchard():
     db.session.commit()
 
     return jsonify({"status": f"{coords.filename} saved to the database."})
+
+
+@api.route("/login", methods=["POST"])
+def login():
+    if current_user.is_authenticated:
+        return jsonify({"status": "Failed! Someone is already logged in!"}), 400
+
+    name = request.form.get(USERNAME_KEY)
+    if not name:
+        return jsonify({"status": "Name can't be empty."}), 400
+
+    password = request.form.get(PASSWORD_KEY)
+    if not password:
+        return jsonify({"status": "Password can't be empty."}), 400
+
+    user = User.query.filter_by(username=name).first()
+    if not user or not user.check_password(password):
+        return jsonify({"status": "Invalid username or password"}), 400
+
+    login_user(user)
+    return jsonify({"status": f"{name} logged in successfully!"})
+
+
+@api.route("/logout", methods=["POST"])
+def logout():
+    logout_user()
+    return jsonify({"status": "Successfully logged out!"})
