@@ -8,7 +8,7 @@ class User(db.Model):
     orchards = db.relationship('Orchard', backref='author', lazy='dynamic')
 
     def __repr__(self):
-        return f"<ID: {self.id} User: {self.username}>"
+        return f"<ID: {self.id}, User: {self.username}>"
 
 
 class Orchard(db.Model):
@@ -18,4 +18,4 @@ class Orchard(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
-        return f"<Orchard ID: {self.id} Rows: {self.rows}, Trees: {self.trees}>"
+        return f"<Orchard ID: {self.id}, Rows: {self.rows}, Trees: {self.trees}>"
