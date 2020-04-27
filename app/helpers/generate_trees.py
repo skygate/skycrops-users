@@ -23,6 +23,8 @@ class TreesGenerator:
         self.corner_coords = self._coords_to_utm(corner_coords)
         self.distance_between_rows = distance_between_rows
         self.distance_between_trees = distance_between_trees
+        self.number_of_rows = None
+        self.number_of_trees_in_each_row = None
 
     def _coords_to_utm(self, coords: List[Point]) -> List[Point]:
         """
@@ -39,6 +41,7 @@ class TreesGenerator:
         """
         trees_coords = []
         alleys_startpoints, alleys_endpoints = self._get_alleys_endpoints()
+        self.number_of_rows = len(alleys_startpoints)
         for idx, startpoint in enumerate(alleys_startpoints):
             endpoint = alleys_endpoints[idx]
             angle = math.atan(self._get_slope(startpoint, endpoint))
@@ -46,6 +49,7 @@ class TreesGenerator:
                 startpoint, endpoint, angle, self.distance_between_trees
             )
             trees_coords.extend(trees)
+        self.number_of_trees_in_each_row = len(trees)
         return trees_coords
 
     def _get_alleys_endpoints(self) -> Tuple[List[Point], List[Point]]:
