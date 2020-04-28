@@ -160,3 +160,10 @@ def get_orchards_data():
         return jsonify({"status": "You have to login first!"}), 400
     orchards = current_user.orchards.all()
     return jsonify({"orchards": f"{orchards}"})
+
+
+@api.route("/is_logged", methods=["POST"])
+def is_logged():
+    if current_user.is_authenticated:
+        return jsonify({"status": "True"})
+    return jsonify({"status": "False"})
