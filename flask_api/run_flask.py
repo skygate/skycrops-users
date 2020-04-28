@@ -9,4 +9,4 @@ def make_shell_context():
 
 
 if __name__ == "__main__":
-    application.run(debug=True, host=HOST, ssl_context=('cert.pem', 'key.pem'))
+    application.run(debug=True, host=HOST, ssl_context="adhoc")
