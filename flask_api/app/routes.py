@@ -69,7 +69,8 @@ def clear_database():
 
 @api.route("/users/orchards", methods=["POST"])
 def create_orchard():
-    user = User.query.get(1)
+    if not current_user.is_authenticated:
+        return jsonify({"status": "You have to login first!"}), 400
 
     coords = request.files.get(COORDS_KEY)
     distance_between_rows = request.form.get(ROWS_KEY)
@@ -120,7 +121,7 @@ def create_orchard():
     rows = trees_generator.number_of_rows
     trees = trees_generator.number_of_trees_in_each_row
 
-    orchard = Orchard(rows=rows, trees=trees, author=user)
+    orchard = Orchard(rows=rows, trees=trees, author=current_user)
     db.session.add(orchard)
     db.session.commit()
 
@@ -159,11 +160,17 @@ def get_orchards_data():
     if not current_user.is_authenticated:
         return jsonify({"status": "You have to login first!"}), 400
     orchards = current_user.orchards.all()
-    return jsonify({"orchards": f"{orchards}"})
+    orchards_json = [
+        [
+            {"id": orchard.id},
+            {"rows": orchard.rows},
+            {"trees in each row": orchard.trees},
+        ]
+        for orchard in orchards
+    ]
+    return jsonify({"orchards": f"{orchards_json}"})
 
 
 @api.route("/is_logged", methods=["POST"])
 def is_logged():
-    if current_user.is_authenticated:
-        return jsonify({"status": "True"})
-    return jsonify({"status": "False"})
+    return jsonify({"status": current_user.is_authenticated})
