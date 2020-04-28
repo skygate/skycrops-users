@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+    nginx:
+        build:
+            context:
+              ./nginx
+        container_name: skycrops_nginx
+        depends_on:
+            - flask
+        ports:
+            - 8080:80
+    flask:
+        build:
+            context: ./flask_api
+        image: flask:0.0.1
+        container_name: skycrops_flask
+        environment:
+            - FLASK_APP=/code/flask_api/run_flask.py
