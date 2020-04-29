@@ -1,5 +1,5 @@
 import math
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -23,8 +23,8 @@ class TreesGenerator:
         self.corner_coords = self._coords_to_utm(corner_coords)
         self.distance_between_rows = distance_between_rows
         self.distance_between_trees = distance_between_trees
-        self.number_of_rows = None
-        self.number_of_trees_in_each_row = None
+        self.number_of_rows: Optional[int] = None
+        self.number_of_trees_in_each_row: Optional[int] = None
 
     def _coords_to_utm(self, coords: List[Point]) -> List[Point]:
         """
