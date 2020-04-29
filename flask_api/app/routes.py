@@ -1,6 +1,7 @@
 import io
 
 from flask import request, jsonify, Blueprint
+from flask_cors import cross_origin
 from flask_login import current_user, login_user, logout_user
 
 from app import db
