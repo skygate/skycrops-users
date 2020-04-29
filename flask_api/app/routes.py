@@ -3,6 +3,10 @@ import io
 from flask import request, jsonify, Blueprint
 from flask_login import current_user, login_user, logout_user
 
+from app import db
+from app.helpers import utils
+from app.helpers.generate_trees import TreesGenerator
+from app.models import User, Orchard
 from config import (
     USERNAME_KEY,
     PASSWORD_KEY,
@@ -12,10 +16,6 @@ from config import (
     DEFAULT_ROWS_DISTANCE,
     DEFAULT_TREES_DISTANCE,
 )
-from . import db
-from .helpers import utils
-from .helpers.generate_trees import TreesGenerator
-from .models import User, Orchard
 
 api = Blueprint("api", __name__)
 
