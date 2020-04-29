@@ -21,11 +21,13 @@ api = Blueprint("api", __name__)
 
 
 @api.route("/healthchecker", methods=["GET"])
+@cross_origin()
 def healthchecker():
     return jsonify(status="I am alive!"), 200
 
 
 @api.route("/users", methods=["POST"])
+@cross_origin()
 def create_user():
     name = request.form.get(USERNAME_KEY)
     if not name:
@@ -51,6 +53,7 @@ def create_user():
 
 
 @api.route("/users/database", methods=["POST"])
+@cross_origin()
 def show_database():
     users = User.query.all()
     orchards = Orchard.query.all()
@@ -58,6 +61,7 @@ def show_database():
 
 
 @api.route("/users/database/clear", methods=["POST"])
+@cross_origin()
 def clear_database():
     db.drop_all()
     db.create_all()
@@ -66,6 +70,7 @@ def clear_database():
 
 
 @api.route("/users/orchards", methods=["POST"])
+@cross_origin()
 def create_orchard():
     if not current_user.is_authenticated:
         return jsonify(status="You have to login first!"), 400
@@ -125,6 +130,7 @@ def create_orchard():
 
 
 @api.route("/login", methods=["POST"])
+@cross_origin()
 def login():
     if current_user.is_authenticated:
         return jsonify(status="Failed! Someone is already logged in!"), 400
@@ -146,12 +152,14 @@ def login():
 
 
 @api.route("/logout", methods=["POST"])
+@cross_origin()
 def logout():
     logout_user()
     return jsonify(status="Successfully logged out!")
 
 
 @api.route("/orchards", methods=["POST"])
+@cross_origin()
 def get_orchards_data():
     if not current_user.is_authenticated:
         return jsonify(status="You have to login first!"), 400
@@ -164,5 +172,6 @@ def get_orchards_data():
 
 
 @api.route("/is_logged", methods=["POST"])
+@cross_origin()
 def is_logged():
     return jsonify(status=current_user.is_authenticated)
