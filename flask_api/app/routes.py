@@ -160,7 +160,10 @@ def get_orchards_data():
     if not current_user.is_authenticated:
         return jsonify({"status": "You have to login first!"}), 400
     orchards = current_user.orchards.all()
-    orchards_data = {orchard.id: {"rows": orchard.rows, "treesInEachRow": orchard.trees} for orchard in orchards}
+    orchards_data = {
+        orchard.id: {"rows": orchard.rows, "treesInEachRow": orchard.trees}
+        for orchard in orchards
+    }
     return jsonify({"orchards": orchards_data})
 
 
