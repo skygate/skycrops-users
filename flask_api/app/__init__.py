@@ -7,7 +7,8 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config
 
 application = Flask(__name__)
-CORS(application)
+cors = CORS(application)
+application.config['CORS_HEADERS'] = 'Content-Type'
 application.secret_key = "super secret key"
 application.config.from_object(Config)
 db = SQLAlchemy(application)
