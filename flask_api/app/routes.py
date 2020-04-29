@@ -56,7 +56,7 @@ def create_user():
 def show_database():
     users = User.query.all()
     orchards = Orchard.query.all()
-    return jsonify({"status": [{"users": f"{users}"}, {"orchards": f"{orchards}"}]})
+    return jsonify({"users": str(users), "orchards": str(orchards)})
 
 
 @api.route("/users/database/clear", methods=["POST"])
@@ -160,15 +160,8 @@ def get_orchards_data():
     if not current_user.is_authenticated:
         return jsonify({"status": "You have to login first!"}), 400
     orchards = current_user.orchards.all()
-    orchards_json = [
-        [
-            {"id": orchard.id},
-            {"rows": orchard.rows},
-            {"trees in each row": orchard.trees},
-        ]
-        for orchard in orchards
-    ]
-    return jsonify({"orchards": f"{orchards_json}"})
+    orchards_data = {orchard.id: {"rows": orchard.rows, "treesInEachRow": orchard.trees} for orchard in orchards}
+    return jsonify({"orchards": orchards_data})
 
 
 @api.route("/is_logged", methods=["POST"])
