@@ -119,7 +119,8 @@ def create_orchard():
     trees_generator = TreesGenerator(
         listed_coords, distance_between_rows, distance_between_trees
     )
-    trees_coordinates = trees_generator.get_trees_coords()
+    # trees_coordinates = trees_generator.get_trees_coords()
+    trees_generator.generate_orchard_dimensions()
     rows = trees_generator.number_of_rows
     trees = trees_generator.number_of_trees_in_each_row
 

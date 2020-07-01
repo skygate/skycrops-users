@@ -35,6 +35,14 @@ class TreesGenerator:
             for lat, lon in coords
         ]
 
+    def generate_orchard_dimensions(self) -> None:
+        """
+        Generate dimensions of the orchard
+        """
+        first_side, second_side = self._get_shorter_rectangle_sides()
+        self.number_of_rows = int(distance.euclidean(first_side[0], first_side[1]) / self.distance_between_rows) + 1
+        self.number_of_trees_in_each_row = int(distance.euclidean(first_side[0], second_side[0]) / self.distance_between_trees) + 1
+
     def get_trees_coords(self) -> List[Point]:
         """
         Iterates through every alley to get tree coordinates
